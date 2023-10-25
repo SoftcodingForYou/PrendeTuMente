@@ -1,0 +1,11 @@
+setuptools
+customtkinter==5.2.0
+numpy
+oauthlib
+Pillow
+PyGithub
+PyQt5
+pyqtgraph
+pyserial
+requests
+scipy
