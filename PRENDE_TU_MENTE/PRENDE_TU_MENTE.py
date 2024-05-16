@@ -20,7 +20,7 @@ class Frontend(QtWidgets.QMainWindow, Processing):
 
         # Load parameters
         # -----------------------------------------------------------------
-        self.port           = str(input("Which COM port is the arduino connected to?: "))
+        # self.port           = str(input("Which COM port is the arduino connected to?: "))
         self.baud_rate      = 115200
         self.numsamples     = int(bkn.sample_rate * bkn.buffer_length)
         self.numchans       = bkn.num_channels
@@ -119,7 +119,7 @@ class Frontend(QtWidgets.QMainWindow, Processing):
         # Antialiasing decreases performance: Set False if too slow
         self.graphWidget.setAntialiasing(True)
 
-        self.create_forward_port()
+        # self.create_forward_port()
         
         # Protect potentially breaking parts in safety net which will close
         # connections when errors are encountered
@@ -144,7 +144,7 @@ class Frontend(QtWidgets.QMainWindow, Processing):
             self.graphWidget.mouseDragEvent = lambda *args, **kwargs: None
             self.graphWidget.hoverEvent = lambda *args, **kwargs: None
             
-            self.sendser.open()
+            # self.sendser.open()
             self.timer.start()
             print('Starting... Window may seem non-responsive for some seconds')
 
@@ -187,7 +187,7 @@ class Frontend(QtWidgets.QMainWindow, Processing):
         self.graphWidget.setYRange(0, self.maxvalue)
 
         # Search for threshold crossing and send trigger if so
-        self.decide_trgigger(self.y)
+        self.decide_trigger(self.y)
 
         self.count          = 0
 
@@ -211,7 +211,7 @@ class Frontend(QtWidgets.QMainWindow, Processing):
         self.sendser.close()
 
 
-    def decide_trgigger(self, signal):
+    def decide_trigger(self, signal):
 
         above_thr           = where(signal >= self.yrange[1])[0]
         below_thr           = where(signal < self.yrange[1])[0]
@@ -225,11 +225,11 @@ class Frontend(QtWidgets.QMainWindow, Processing):
 
         if trigger != self.last_trigger:
             if trigger:
-                # self.graphWidget.setBackground((255, 105, 105))
-                self.sendser.write(bytes("H", 'utf-8'))
+                self.graphWidget.setBackground((255, 105, 105))
+                # self.sendser.write(bytes("H", 'utf-8'))
             else:
-                # self.graphWidget.setBackground('transparent')
-                self.sendser.write(bytes("L", 'utf-8'))
+                self.graphWidget.setBackground('transparent')
+                # self.sendser.write(bytes("L", 'utf-8'))
             self.setPalette(self.palette)
             self.last_trigger = trigger
 
