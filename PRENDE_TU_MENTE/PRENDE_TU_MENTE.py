@@ -31,6 +31,7 @@ class Frontend(QtWidgets.QMainWindow, Processing):
         self.yrange         = bkn.yrange
         self.maxvalue       = 2500
         self.last_trigger   = False
+        self.target_channel = 0
 
         # Load methods
         # -----------------------------------------------------------------
@@ -52,7 +53,7 @@ class Frontend(QtWidgets.QMainWindow, Processing):
         # -----------------------------------------------------------------
         super(Frontend, self).__init__(*args, **kwargs)
 
-        self.setWindowTitle("Neuri workshop")
+        self.setWindowTitle("Detect heart beats")
         
         # This following line causes and X11 error on GNU/Linux (tried with
         # various distributions)
@@ -108,8 +109,8 @@ class Frontend(QtWidgets.QMainWindow, Processing):
         self.graphWidget.setBackground('transparent')
         self.graphWidget.setYRange(self.yrange[0], self.yrange[1])
         self.graphWidget.setRange(yRange=(self.yrange[0], self.yrange[1]), disableAutoRange=True)
-        self.graphWidget.setLabel('left', 'Amplitude de señal')
-        self.graphWidget.setLabel('bottom', 'Tiempo (segundos)')
+        self.graphWidget.setLabel('left', 'Signal amplitude (uV)')
+        self.graphWidget.setLabel('bottom', 'Time (s)')
         self.graphWidget.addLegend()
         self.set_theme()
 
@@ -133,8 +134,8 @@ class Frontend(QtWidgets.QMainWindow, Processing):
             self.y = [0 for _ in range(0, self.numsamples, self.s_down)]
 
             self.data_line = {}
-            self.data_line[0] =  self.graphWidget.plot(self.x, self.y, name='Corazón', pen=pen1)
-            self.data_line[1] =  self.graphWidget.plot(self.x, self.y, name='Umbral', pen=pen2)
+            self.data_line[0] =  self.graphWidget.plot(self.x, self.y, name='Heart', pen=pen1)
+            self.data_line[1] =  self.graphWidget.plot(self.x, self.y, name='Threshold', pen=pen2)
 
             # Disable interactivity
             self.graphWidget.setMouseEnabled(x=False, y=False)
@@ -178,7 +179,7 @@ class Frontend(QtWidgets.QMainWindow, Processing):
         self.x              = self.x[1:]  # Remove the first y element
         self.x.append(self.x[-1]+self.count/self.sample_rate) # t_now/1000
 
-        self.y              = processed_buffer[0, self.idx_retain]
+        self.y              = processed_buffer[self.target_channel, self.idx_retain]
         self.data_line[0].setData(self.x, self.y)  # Update the data
 
         # Plot threshold

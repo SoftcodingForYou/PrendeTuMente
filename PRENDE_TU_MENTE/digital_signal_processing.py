@@ -13,7 +13,7 @@ class Processing():
         #Signal processing
         self.filter_order   = 3 #scalar
         self.frequency_bands= {
-            'Workshop':     (0.4,     2),
+            'Workshop':     (0.4,   2),
             'LineNoise':    (46,    54)}
         
         self.prepare_filters()
